@@ -21,6 +21,7 @@ impl Matrix<Alpha> {
 
         Matrix(array, rows, cols)
     }
+
     pub fn sum(&self, other: Self) -> Self {
         assert!(self.rows() == other.rows(), "self row != other col");
         assert!(self.cols() == other.cols(), "self col != other col");
@@ -35,6 +36,7 @@ impl Matrix<Alpha> {
 
         Matrix(array, self.rows(), self.cols())
     }
+
     pub fn id(n: usize) -> Matrix<Alpha> {
         let mut array = vec![vec![0.; n]; n];
 
@@ -44,6 +46,7 @@ impl Matrix<Alpha> {
 
         Matrix(array, n, n)
     }
+
     pub fn mult_k(&self, k: Alpha) -> Self {
         let mut array = vec![vec![0.; self.cols()]; self.rows()];
         for i in (0..self.rows()).into_iter() {
