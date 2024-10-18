@@ -5,6 +5,8 @@ use crate::matrix::*;
 use num::pow;
 use rand::Rng;
 
+use rayon::prelude::*;
+
 impl Matrix<Alpha> {
     /// generate the Identity matrix, only works with numbers
 
@@ -20,6 +22,24 @@ impl Matrix<Alpha> {
         }
 
         Matrix(array, rows, cols)
+    }
+
+    pub fn sum_p(&self, other: Self) -> Self {
+        assert!(self.rows() == other.rows(), "self row != other col");
+        assert!(self.cols() == other.cols(), "self col != other col");
+
+        // Create the output array, but instead of using a regular iterator, use a parallel iterator.
+        let array: Vec<Vec<Alpha>> = (0..self.rows())
+            .into_par_iter() // Parallel iterator for rows
+            .map(|i| {
+                (0..self.cols())
+                    .into_par_iter() // Parallel iterator for columns
+                    .map(|j| (self.0[i][j] + other.0[i][j]) as Alpha)
+                    .collect()
+            })
+            .collect();
+
+        Matrix(array, self.rows(), self.cols())
     }
 
     pub fn sum(&self, other: Self) -> Self {
@@ -77,6 +97,41 @@ impl Matrix<Alpha> {
                 array[i][j] = tmp
             }
         }
+
+        Matrix(array, self.rows(), other.cols())
+    }
+
+    pub fn product_p(
+        // what is this mess of generics jesus christ
+        &self,
+        other: Matrix<Alpha>,
+    ) -> Matrix<Alpha> {
+        assert!(self.cols() == other.rows(), "cant be multiplied");
+
+        let array: Vec<Vec<Alpha>> = (0..self.rows())
+            .into_par_iter()
+            .map(|i| {
+                (0..self.cols())
+                    .into_par_iter()
+                    .map(|j| {
+                        let tmp: Alpha = (0..self.cols())
+                            .into_iter()
+                            .map(|k| self.0[i][k] * other.0[k][j])
+                            .fold(0., |acc, x| acc + x);
+                        tmp
+                    })
+                    .collect()
+            })
+            .collect();
+        //for i in (0..self.rows()).into_iter() {
+        //    for j in (0..other.cols()).into_iter() {
+        //        tmp = 0.;
+        //        for k in (0..self.cols()).into_iter() {
+        //            tmp += self.0[i][k] * other.0[k][j]
+        //        }
+        //        array[i][j] = tmp
+        //    }
+        //}
 
         Matrix(array, self.rows(), other.cols())
     }

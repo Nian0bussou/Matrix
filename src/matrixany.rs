@@ -1,5 +1,6 @@
 #![allow(dead_code)]
 #![allow(unused_variables)]
+
 use crate::Matrix;
 
 impl<T> Matrix<T>

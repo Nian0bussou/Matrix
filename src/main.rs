@@ -10,16 +10,10 @@ fn main() {
     let a = Matrix::rand(3, 3);
     let b = Matrix::rand(3, 3);
 
-    let c = Matrix::from(vec![
-        vec!["a", "b", "c"],
-        vec!["d", "e", "f"],
-        vec!["g", "h", "i"],
-    ]);
+    println!("おはようございます、みんなさん");
 
-    c.print();
-    c.transpose().print();
+    a.sum_p(b.clone()).print();
 
-    a.product(b).print();
-
-    a.inv_w().print();
+    // am i really faster on workman or not ???
+    a.product_p(b).print();
 }
